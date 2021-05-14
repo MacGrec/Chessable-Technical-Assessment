@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Entity\Branch;
 use App\Form\Model\BranchDto;
 use App\Form\Type\BranchFormType;
 use App\Service\CreateBranch;
@@ -13,13 +12,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class BranchesController extends AbstractController
+class BranchesController extends AbstractFOSRestController
 {
-    const PRODUCT_NOT_EXIST = "Product not exist";
-    const SELLER_NOT_EXIST = "Seller not exist";
     const FORM_NOT_SUBMITTED = "Form not submitted";
     const MESSAGE_KEY = "message";
-    const CODE_KEY = "codeq";
+    const CODE_KEY = "code";
 
     /**
      * @Rest\Post(path="/branches/add")
