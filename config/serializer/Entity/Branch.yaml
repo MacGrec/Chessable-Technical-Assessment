@@ -1,0 +1,6 @@
+App\Entity\Branch:
+  attributes:
+    id:
+      groups: ['branch']
+    name:
+      groups: ['branch']
