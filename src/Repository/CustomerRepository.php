@@ -36,32 +36,19 @@ class CustomerRepository extends ServiceEntityRepository
         return $customer;
     }
 
-    // /**
-    //  * @return Customer[] Returns an array of Customer objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findOne(Customer $customer): ?Customer
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $customer_id = $customer->getId();
+        $sql = 'SELECT * FROM customer where id ='. $customer_id .';';
+        $statement = $this->connection->prepare($sql);
+        $statement->executeQuery();
+        $database_returned = $statement->fetchAll();
+        if(!isset($database_returned[0])) {
+            return null;
+        }
+        $database_array_branch = $database_returned[0];
+        $name = $database_array_branch["name"];
+        $customer->setName($name);
+        return $customer;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Customer
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
