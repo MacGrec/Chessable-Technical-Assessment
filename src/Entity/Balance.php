@@ -55,12 +55,12 @@ class Balance
         return $this;
     }
 
-    public function getMove(): ?string
+    public function getMove(): ?float
     {
         return $this->move;
     }
 
-    public function setMove(string $move): self
+    public function setMove(float $move): self
     {
         $this->move = $move;
 

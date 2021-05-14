@@ -7,6 +7,7 @@ use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @method Customer|null find($id, $lockMode = null, $lockVersion = null)
@@ -50,5 +51,25 @@ class CustomerRepository extends ServiceEntityRepository
         $name = $database_array_branch["name"];
         $customer->setName($name);
         return $customer;
+    }
+
+    public function getTotalBalance(Customer $customer): ?float
+    {
+        $customer_id = $customer->getId();
+        $sql = 'SELECT                             
+                    customer.id customer_id,                              
+                    SUM(balance.move) AS total_balance                      
+                FROM customer                                                     
+                INNER JOIN balance ON customer.id = balance.customer_id                     
+                WHERE customer.id = '. $customer_id . ' 
+                GROUP BY customer_id;';
+        $statement = $this->connection->prepare($sql);
+        $statement->executeQuery();
+        $database_returned = $statement->fetchAll();
+        if(!isset($database_returned[0])) {
+            return null;
+        }
+        $database_array_branch = $database_returned[0];
+        return floatval($database_array_branch["total_balance"]);
     }
 }

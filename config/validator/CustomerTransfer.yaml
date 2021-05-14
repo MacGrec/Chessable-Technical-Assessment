@@ -1,0 +1,21 @@
+App\Form\Model\CustomerTransferDto:
+  properties:
+    giver_customer_id:
+      - NotBlank: ~
+      - Positive: ~
+    receiver_customer_id:
+      - NotBlank: ~
+      - Positive: ~
+    amount:
+      - NotBlank: ~
+      - Positive: ~
+      - Type:
+          type: float
+          message: The value {{ value }} is not a valid {{ type }}.
+    coin:
+      - NotBlank: ~
+      - Length:
+          min: 3
+          max: 250
+          minMessage: 'The coin must be at least {{ limit }} characters long'
+          maxMessage: 'The coin cannot be longer than {{ limit }} characters'
