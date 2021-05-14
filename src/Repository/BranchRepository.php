@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Branch;
+use App\Form\Model\BranchDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,7 +24,7 @@ class BranchRepository extends ServiceEntityRepository
         parent::__construct($registry, Branch::class);
     }
 
-    public function save(Branch $branch):Branch
+    public function save(Branch $branch): Branch
     {
         $name = $branch->getName();
         $location = $branch->getLocation();
@@ -33,6 +34,22 @@ class BranchRepository extends ServiceEntityRepository
         $statement = $this->connection->prepare($sql);
         $statement->executeQuery();
         $branch->setId($this->connection->lastInsertId());
+        return $branch;
+    }
+
+    public function findOne(Branch $branch): ?Branch
+    {
+        $branch_id = $branch->getId();
+        $sql = 'SELECT * FROM branch where id ='. $branch_id .';';
+        $statement = $this->connection->prepare($sql);
+        $statement->executeQuery();
+        $database_returned = $statement->fetchAll();
+        if(!isset($database_returned[0])) {
+            return null;
+        }
+        $database_array_branch = $database_returned[0];
+        $name = $database_array_branch["name"];
+        $branch->setName($name);
         return $branch;
     }
 }

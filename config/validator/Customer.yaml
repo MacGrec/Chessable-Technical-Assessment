@@ -1,0 +1,11 @@
+App\Form\Model\CustomerDto:
+  properties:
+    name:
+      - NotBlank: ~
+      - Length:
+          min: 3
+          max: 250
+          minMessage: 'The name must be at least {{ limit }} characters long'
+          maxMessage: 'The name cannot be longer than {{ limit }} characters'
+    balance:
+      - NotBlank: ~

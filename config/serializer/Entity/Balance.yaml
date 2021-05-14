@@ -1,0 +1,6 @@
+App\Entity\Balance:
+  attributes:
+    id:
+      groups: ['branch']
+    move:
+      groups: ['branch']
