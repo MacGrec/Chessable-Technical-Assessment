@@ -2,11 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Location;
 use App\Form\Model\BranchDto;
 use App\Entity\Branch;
 use App\Repository\BranchRepository;
-use App\Repository\LocationRepository;
 
 class GetBranch
 {
