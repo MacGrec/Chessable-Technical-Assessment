@@ -1,0 +1,24 @@
+App\Form\Model\LocationDto:
+  properties:
+    address:
+      - NotBlank: ~
+      - Length:
+          min: 3
+          max: 250
+          minMessage: 'The address must be at least {{ limit }} characters long'
+          maxMessage: 'The address cannot be longer than {{ limit }} characters'
+    postal_code:
+      - NotBlank: ~
+      - Positive:  ~
+    country:
+      - Length:
+          min: 3
+          max: 250
+          minMessage: 'The country must be at least {{ limit }} characters long'
+          maxMessage: 'The country cannot be longer than {{ limit }} characters'
+    province:
+      - Length:
+          min: 3
+          max: 250
+          minMessage: 'The province must be at least {{ limit }} characters long'
+          maxMessage: 'The province cannot be longer than {{ limit }} characters'

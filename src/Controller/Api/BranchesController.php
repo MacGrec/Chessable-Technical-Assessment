@@ -1,15 +1,47 @@
 <?php
 namespace App\Controller\Api;
 
+use App\Entity\Branch;
+use App\Form\Model\BranchDto;
+use App\Form\Type\BranchFormType;
+use App\Service\CreateBranch;
 use Doctrine\DBAL\Driver\Connection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class BranchesController extends AbstractFOSRestController
+class BranchesController extends AbstractController
 {
+    const PRODUCT_NOT_EXIST = "Product not exist";
+    const SELLER_NOT_EXIST = "Seller not exist";
+    const FORM_NOT_SUBMITTED = "Form not submitted";
+    const MESSAGE_KEY = "message";
+    const CODE_KEY = "codeq";
+
+    /**
+     * @Rest\Post(path="/branches/add")
+     * @Rest\View(serializerGroups={"branch"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function add(CreateBranch $createBranch, Request $request): View
+    {
+        $branchDto = new BranchDto();
+        $form = $this->createForm(BranchFormType::class, $branchDto);
+        $form->handleRequest($request);
+        $response = $form;
+        $response_code = Response::HTTP_BAD_REQUEST;
+        if (!$form->isSubmitted()) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FORM_NOT_SUBMITTED];
+        }
+        if ($form->isValid()) {
+            $response_code = Response::HTTP_OK;
+            $response = $createBranch->doAction($branchDto);;
+        }
+        return View::create($response, $response_code);
+    }
 
     /**
      * @Rest\Get(path="/branches/report/balance/highest")
