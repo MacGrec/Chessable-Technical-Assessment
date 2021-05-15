@@ -9,3 +9,4 @@ App\Form\Model\BranchDto:
           maxMessage: 'The name cannot be longer than {{ limit }} characters'
     location:
       - NotBlank: ~
+      - NotNull: ~

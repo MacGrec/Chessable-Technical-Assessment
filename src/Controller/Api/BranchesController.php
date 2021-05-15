@@ -23,6 +23,11 @@ class BranchesController extends AbstractFOSRestController
     const FORM_NOT_SUBMITTED = "Form not submitted";
     const MESSAGE_KEY = "message";
     const CODE_KEY = "code";
+    const FIELD_COUNTRY_MISSED = "Field country missed";
+    const FIELD_PROVINCE_MISSED = "Field province missed";
+    const FIELD_POSTAL_CODE_MISSED = "Field postal_code missed";
+    const FIELD_ADDRESS_MISSED = "Field address missed";
+    const FIELD_LOCATION_MISSED = "Field location missed";
 
     /**
      * @Rest\Post(path="/branches/add")
@@ -40,9 +45,13 @@ class BranchesController extends AbstractFOSRestController
         if (!$form->isSubmitted()) {
             [$response_code, $response] = $this->mountFormNotSubmitted();
         }
+
         if ($form->isValid()) {
-            $response_code = Response::HTTP_OK;
-            $response = $createBranch->doAction($branchDto);;
+            [$customValid, $response_code, $response] = $this->ValidObjectLocation($branchDto, $response, $response_code);
+            if($customValid){
+                $response_code = Response::HTTP_OK;
+                $response = $createBranch->doAction($branchDto);
+            }
         }
         return View::create($response, $response_code);
     }
@@ -153,6 +162,39 @@ class BranchesController extends AbstractFOSRestController
         $form = $this->createForm(MinimumCustomerTotalBalanceFormType::class, $minimumCustomerTotalBalanceDto);
         $form->handleRequest($request);
         return $form;
+    }
+
+    private function ValidObjectLocation(BranchDto $branchDto, FormInterface $response, int $response_code): array
+    {
+        $customValid = true;
+        if (!isset($branchDto->location)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FIELD_LOCATION_MISSED];
+            $customValid = false;
+        }
+        else if (!isset($branchDto->location->address)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FIELD_ADDRESS_MISSED];
+            $customValid = false;
+        }
+        else if (!isset($branchDto->location->postal_code)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FIELD_POSTAL_CODE_MISSED];
+            $customValid = false;
+
+        }
+        else if (!isset($branchDto->location->province)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FIELD_PROVINCE_MISSED];
+            $customValid = false;
+
+        }
+        else if (!isset($branchDto->location->country)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FIELD_COUNTRY_MISSED];
+            $customValid = false;
+        }
+        return [$customValid, $response_code, $response];
     }
 
 
