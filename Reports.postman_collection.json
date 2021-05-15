@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "ea416444-965b-4f46-ab7a-bdea99211d83",
+		"name": "Reports",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Branches with X Customers with more than Y in total Balance",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"minimum_number_customer\": 2,\r\n    \"minimum_total_balance\": 20.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/branches/report/balance/morethan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"branches",
+						"report",
+						"balance",
+						"morethan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Branches with their highest Customer-Balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/branches/report/balance/highest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"branches",
+						"report",
+						"balance",
+						"highest"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

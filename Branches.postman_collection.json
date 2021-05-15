@@ -1,0 +1,73 @@
+{
+	"info": {
+		"_postman_id": "82c8e47f-bcdb-43b2-8cde-f707b16720b5",
+		"name": "Branches",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Branch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "name",
+						"value": "test",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Sucursal Madagascar\",\r\n    \"location\": {\r\n        \"address\": \"calle una misma\",\r\n        \"postal_code\": 11170,\r\n        \"country\": \"Madagascar\",\r\n        \"province\": \"Selva Norte\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/branches/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"branches",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get  Branch",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/branches/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"branches",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
