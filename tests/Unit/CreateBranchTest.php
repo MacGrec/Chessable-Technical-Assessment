@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class CreateBranchTest extends TestCase
 {
-    public function testSuccessCreateBranch()
+    private function setUpMockCreateBranch(): array
     {
         $branchRepository = $this->getMockBuilder(BranchRepository::class)
             ->disableOriginalConstructor()
@@ -22,6 +22,12 @@ class CreateBranchTest extends TestCase
         $locationRepository = $this->getMockBuilder(LocationRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+        return [$branchRepository, $locationRepository];
+    }
+
+    public function testSuccessCreateBranch()
+    {
+        [$branchRepository, $locationRepository] = $this->setUpMockCreateBranch();
 
         $now = date('Y-m-d H:i:s');
         $branch = $this->buildBranch($now);
