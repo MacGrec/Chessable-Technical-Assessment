@@ -2,10 +2,13 @@
 namespace App\Controller\Api;
 
 use App\Form\Model\BranchDto;
+use App\Form\Model\MinimumCustomerTotalBalanceDto;
 use App\Form\Type\BranchFormType;
+use App\Form\Type\MinimumCustomerTotalBalanceFormType;
 use App\Service\CreateBranch;
 use App\Service\CreateCustomer;
 use App\Service\GetAllBranchesWithQuantityCustomersWithMoreQuantityBalance;
+use App\Service\GetAllBranchesWithSpecificNumberCustomersWithSpecificBalance;
 use App\Service\GetBranch;
 use Doctrine\DBAL\Driver\Connection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -72,7 +75,7 @@ class BranchesController extends AbstractFOSRestController
     )
     {
         $report_all_branches_highest_balance = $allBranchesWithQuantityCustomersWithMoreQuantityBalance->doAction();
-        if(!isset($report_all_branches_highest_balance)) {
+        if(empty($report_all_branches_highest_balance)) {
             $response_code = Response::HTTP_BAD_REQUEST;
             $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::NO_EXIST_DATA];
             return View::create($response, $response_code);
@@ -84,50 +87,36 @@ class BranchesController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Get(path="/branches/report/balance/morethan")
+     * @Rest\Post(path="/branches/report/balance/morethan")
      * @Rest\View(serializerGroups={"branch"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getReportBalanceMoreThan(Connection $connection)
+    public function getReportBalanceMoreThan(
+        GetAllBranchesWithSpecificNumberCustomersWithSpecificBalance $allBranchesWithSpecificNumberCustomersWithSpecificBalance,
+        Request $request
+    )
     {
-        $sql = 'SELECT 
-                        *
-                FROM (
-                    SELECT                         
-                           branch_id,                          
-                           branch_name,                          
-                           location_id,                          
-                           location_address, 
-                           location_postal_code,
-                           location_province,
-                           location_country,
-                           COUNT(customer_id) AS total_customers                                 
-                    FROM ( 
-                        SELECT                              
-                               branch.id branch_id,                            
-                               branch.name branch_name,                             
-                               branch.location_id location_id,                            
-                               customer.name customer_name,                             
-                               customer.id customer_id,                              
-                               SUM(balance.move) AS balance_total,                            
-                               location.address location_address,
-                               location.postal_code location_postal_code,
-                               location.province location_province,
-                               location.country location_country
-                               
-                        FROM branch                            
-                            INNER JOIN customer ON branch.id = customer.branch_id                            
-                            INNER JOIN balance ON customer.id = balance.customer_id                           
-                            INNER JOIN location ON branch.location_id = location.id                     
-                        GROUP BY customer_id                    
-                        ) as q 
-                    WHERE balance_total >= 20 
-                    GROUP BY branch_id
-                    ) as t 
-                WHERE total_customers >= 2; ';
-        $statement = $connection->prepare($sql);
-        $statement->executeQuery();
-        $response = $statement->fetchAll();
-        $response_code = Response::HTTP_OK;
+        $minimumCustomerTotalBalanceDto = new MinimumCustomerTotalBalanceDto();
+        $form = $this->createForm(MinimumCustomerTotalBalanceFormType::class, $minimumCustomerTotalBalanceDto);
+        $form->handleRequest($request);
+        $response = $form;
+        $response_code = Response::HTTP_BAD_REQUEST;
+        if (!$form->isSubmitted()) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::FORM_NOT_SUBMITTED];
+        }
+        if ($form->isValid()) {
+            $minimum_number_customer = $minimumCustomerTotalBalanceDto->minimum_number_customer;
+            $minimum_total_balance = $minimumCustomerTotalBalanceDto->minimum_total_balance;
+            $response = $allBranchesWithSpecificNumberCustomersWithSpecificBalance->doAction($minimum_number_customer, $minimum_total_balance);
+            if(empty($response)) {
+                $response_code = Response::HTTP_BAD_REQUEST;
+                $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::NO_EXIST_DATA];
+                return View::create($response, $response_code);
+            }
+
+            $response_code = Response::HTTP_OK;
+        }
+
         return View::create($response, $response_code);
     }
 

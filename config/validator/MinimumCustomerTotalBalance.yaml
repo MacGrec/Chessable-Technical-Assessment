@@ -1,0 +1,11 @@
+App\Form\Model\MinimumCustomerTotalBalanceDto:
+  properties:
+    minimum_number_customer:
+      - NotBlank: ~
+      - Positive: ~
+    minimum_total_balance:
+      - NotBlank: ~
+      - Positive: ~
+      - Type:
+          type: float
+          message: The value {{ value }} is not a valid {{ type }}.
