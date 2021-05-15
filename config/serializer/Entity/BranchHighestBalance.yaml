@@ -1,0 +1,6 @@
+App\Entity\BranchHighestBalance:
+  attributes:
+    id:
+      groups: ['branchHighest']
+    highest_balance:
+      groups: ['branchHighest']

@@ -5,6 +5,7 @@ use App\Form\Model\BranchDto;
 use App\Form\Type\BranchFormType;
 use App\Service\CreateBranch;
 use App\Service\CreateCustomer;
+use App\Service\GetAllBranchesWithQuantityCustomersWithMoreQuantityBalance;
 use App\Service\GetBranch;
 use Doctrine\DBAL\Driver\Connection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 class BranchesController extends AbstractFOSRestController
 {
     const BRANCH_NOT_EXIST = "Branch not exist";
+    const NO_EXIST_DATA = "Not exist data to generate report";
     const FORM_NOT_SUBMITTED = "Form not submitted";
     const MESSAGE_KEY = "message";
     const CODE_KEY = "code";
@@ -63,42 +65,21 @@ class BranchesController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(path="/branches/report/balance/highest")
-     * @Rest\View(serializerGroups={"branch"}, serializerEnableMaxDepthChecks=true)
+     * @Rest\View(serializerGroups={"branchHighest"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getReportBalanceHighest(Connection $connection)
+    public function getReportBalanceHighest(
+        GetAllBranchesWithQuantityCustomersWithMoreQuantityBalance $allBranchesWithQuantityCustomersWithMoreQuantityBalance
+    )
     {
-        $sql = 'SELECT 
-                       branch_id,
-                       MAX(balance_total) AS highest_balance
-                FROM (
-                    SELECT                         
-                           branch_id,                                                
-                           customer_id,                         
-                           balance_total                
-                    FROM (                      
-                        SELECT                             
-                               branch.id branch_id,                               
-                               customer.id customer_id,                             
-                               SUM(balance.move) AS balance_total                      
-                        FROM branch                           
-                            INNER JOIN customer ON branch.id = customer.branch_id                           
-                            INNER JOIN balance ON customer.id = balance.customer_id                     
-                        GROUP BY customer_id                      
-                        UNION ALL                      
-                        SELECT                             
-                               branch.id branch_id,                                                        
-                               customer.id customer_id, 0 AS balance_total                    
-                        FROM branch                           
-                            LEFT JOIN customer ON branch.id = customer.branch_id                      
-                        WHERE customer.branch_id IS NULL                      
-                        ) as t
-                    ) as r 
-                GROUP BY branch_id; ';
-        $statement = $connection->prepare($sql);
-        $statement->executeQuery();
-        $response = $statement->fetchAll();
+        $report_all_branches_highest_balance = $allBranchesWithQuantityCustomersWithMoreQuantityBalance->doAction();
+        if(!isset($report_all_branches_highest_balance)) {
+            $response_code = Response::HTTP_BAD_REQUEST;
+            $response = [self::CODE_KEY => $response_code, self::MESSAGE_KEY => self::NO_EXIST_DATA];
+            return View::create($response, $response_code);
+        }
+
         $response_code = Response::HTTP_OK;
-        return View::create($response, $response_code);
+        return View::create($report_all_branches_highest_balance, $response_code);
     }
 
 
