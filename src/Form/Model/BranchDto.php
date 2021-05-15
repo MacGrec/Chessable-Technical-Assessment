@@ -7,4 +7,5 @@ class BranchDto
     public $id;
     public $name;
     public $location;
+    public $created_at;
 }
