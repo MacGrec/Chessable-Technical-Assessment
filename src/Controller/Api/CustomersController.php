@@ -5,15 +5,12 @@ namespace App\Controller\Api;
 use App\Form\Model\BranchDto;
 use App\Form\Model\CustomerDto;
 use App\Form\Model\CustomerTransferDto;
-use App\Form\Type\BranchFormType;
 use App\Form\Type\CustomerFormType;
 use App\Form\Type\CustomerTransferFormType;
-use App\Service\CreateBranch;
 use App\Service\CreateCustomer;
 use App\Service\GetBranch;
 use App\Service\GetCustomer;
 use App\Service\TransferBalance;
-use Doctrine\DBAL\Driver\Connection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -34,7 +31,12 @@ class CustomersController extends AbstractFOSRestController
      * @Rest\Post(path="/customers/add/branch/{id}", requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"customer"}, serializerEnableMaxDepthChecks=true)
      */
-    public function add(int $id, GetBranch $getBranch, CreateCustomer $createCustomer, Request $request): View
+    public function add(
+        int $id,
+        GetBranch $getBranch,
+        CreateCustomer $createCustomer,
+        Request $request
+    ): View
     {
         $branchDto = new BranchDto();
         $branchDto->id = $id;
@@ -56,7 +58,10 @@ class CustomersController extends AbstractFOSRestController
      * @Rest\Get(path="/customers/{id}", requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"customer"}, serializerEnableMaxDepthChecks=true)
      */
-    public function getOne(int $id, GetCustomer $getCustomer): View
+    public function getOne(
+        int $id,
+        GetCustomer $getCustomer
+    ): View
     {
         $customerDto = new CustomerDto();
         $customerDto->id = $id;
@@ -72,7 +77,11 @@ class CustomersController extends AbstractFOSRestController
      * @Rest\Post(path="/customers/balance/transfer")
      * @Rest\View(serializerGroups={"customer"}, serializerEnableMaxDepthChecks=true)
      */
-    public function transferBalance(GetCustomer $getCustomer, TransferBalance $transferBalance, Request $request): View
+    public function transferBalance(
+        GetCustomer $getCustomer,
+        TransferBalance $transferBalance,
+        Request $request
+    ): View
     {
         $customerTransferDto = new CustomerTransferDto();
         $form = $this->FillCustomerTransferDto($customerTransferDto, $request);
@@ -110,14 +119,20 @@ class CustomersController extends AbstractFOSRestController
         return array($response, $response_code);
     }
 
-    private function FillCustomerTransferDto(CustomerTransferDto $customerTransferDto, Request $request): FormInterface
+    private function FillCustomerTransferDto(
+        CustomerTransferDto $customerTransferDto,
+        Request $request
+    ): FormInterface
     {
         $form = $this->createForm(CustomerTransferFormType::class, $customerTransferDto);
         $form->handleRequest($request);
         return $form;
     }
 
-    private function fillCustomerDto(CustomerDto $customerDto, Request $request): FormInterface
+    private function fillCustomerDto(
+        CustomerDto $customerDto,
+        Request $request
+    ): FormInterface
     {
         $form = $this->createForm(CustomerFormType::class, $customerDto);
         $form->handleRequest($request);
