@@ -33,16 +33,15 @@ class BranchRepository extends ServiceEntityRepository
         $name = $branch->getName();
         $location = $branch->getLocation();
         $location_id = $location->getId();
-        $created_at = $branch->getCreatedAt();
+        $created_at= date('Y-m-d H:i:s');
         $sql = 'INSERT INTO branch (name, created_at, location_id) VALUES ("'. $name .'", "'. $created_at .'", '. $location_id .');';
         $this->executeQuery($sql);
         $branch->setId($this->connection->lastInsertId());
         return $branch;
     }
 
-    public function findOne(Branch $branch): ?Branch
+    public function findOne(int $branch_id): ?Branch
     {
-        $branch_id = $branch->getId();
         $sql = 'SELECT * FROM branch where id ='. $branch_id .';';
         $database_returned_data = $this->getDatabaseData($sql);
         if(!isset($database_returned_data[0])) {
@@ -50,7 +49,9 @@ class BranchRepository extends ServiceEntityRepository
         }
         $database_array_branch = $database_returned_data[0];
         $name = $database_array_branch["name"];
+        $branch = new Branch();
         $branch->setName($name);
+        $branch->setId($branch_id);
         return $branch;
     }
 

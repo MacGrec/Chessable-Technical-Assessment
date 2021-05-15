@@ -8,7 +8,7 @@ use App\Repository\BranchRepository;
 
 class GetBranch
 {
-    private $branchRepository;
+    private BranchRepository $branchRepository;
 
     public function __construct(BranchRepository $branchRepository)
     {
@@ -17,8 +17,6 @@ class GetBranch
 
     public function doAction(BranchDto $branchDto): ?Branch
     {
-        $branch = new Branch();
-        $branch->setId($branchDto->id);
-        return $this->branchRepository->findOne($branch);
+        return $this->branchRepository->findOne($branchDto->id);
     }
 }

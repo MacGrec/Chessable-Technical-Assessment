@@ -30,16 +30,15 @@ class CustomerRepository extends ServiceEntityRepository
     {
         $branch_id = $customer->getBranch()->getId();
         $name = $customer->getName();
-        $created_at = $customer->getCreatedAt();
+        $created_at= date('Y-m-d H:i:s');
         $sql = 'INSERT INTO customer (branch_id, name, created_at) VALUES ('. $branch_id . ',"' . $name .'","' . $created_at .'");';
         $this->executeQuery($sql);
         $customer->setId($this->connection->lastInsertId());
         return $customer;
     }
 
-    public function findOne(Customer $customer): ?Customer
+    public function findOne(int $customer_id): ?Customer
     {
-        $customer_id = $customer->getId();
         $sql = 'SELECT * FROM customer where id ='. $customer_id .';';
         $database_returned_data = $this->getDatabaseData($sql);
         if(!isset($database_returned[0])) {
