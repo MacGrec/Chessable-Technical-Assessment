@@ -17,8 +17,6 @@ class GetCustomer
 
     public function doAction(CustomerDto $customerDto): ?Customer
     {
-        $customer = new Customer();
-        $customer->setId($customerDto->id);
-        return $this->customerRepository->findOne($customer);
+        return $this->customerRepository->findOne($customerDto->id);
     }
 }

@@ -29,11 +29,9 @@ class CreateBranchTest extends TestCase
     {
         [$branchRepository, $locationRepository] = $this->setUpMockCreateBranch();
 
-        $now = date('Y-m-d H:i:s');
-        $branch = $this->buildBranch($now);
+        $branch = $this->buildBranch();
         $location = $this->buildLocation();
-        $branchDto = $this->buildBranchDto($now);
-
+        $branchDto = $this->buildBranchDto();
 
         $locationRepository
             ->expects(self::exactly(1))
@@ -45,19 +43,16 @@ class CreateBranchTest extends TestCase
             ->expects(self::exactly(1))
             ->method('save')
             ->with($branch)
-            ->willReturn($branch->setCreatedAt($now));
+            ->willReturn($branch);
 
         $createBranch = new CreateBranch($branchRepository, $locationRepository);
-        $result = $createBranch->doAction($branchDto);
-        $this->assertSame($branch->getName(), $result->getName());
-        $this->assertSame($branch->getLocation()->getAddress(), $result->getLocation()->getAddress());
+        $createBranch->doAction($branchDto);
     }
 
-    private function buildBranch(string $now): Branch
+    private function buildBranch(): Branch
     {
         $branch = new Branch();
         $branch->setName("Madrid Branch");
-        $branch->setCreatedAt($now);
         $location = $this->buildLocation();
         $branch->setLocation($location);
         return $branch;
@@ -73,11 +68,10 @@ class CreateBranchTest extends TestCase
         return $location;
     }
 
-    private function buildBranchDto(string $now): BranchDto
+    private function buildBranchDto(): BranchDto
     {
         $branchDto = new BranchDto();
         $branchDto->name = "Madrid Branch";
-        $branchDto->created_at = $now;
         $locationDto = $this->buildLocationDto();
         $branchDto->location= $locationDto;
         return $branchDto;

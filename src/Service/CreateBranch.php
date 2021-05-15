@@ -50,8 +50,6 @@ class CreateBranch
         $branch = new Branch();
         $branch->setName($branchDto->name);
         $branch->setLocation($location_saved);
-        $now = date('Y-m-d H:i:s');
-        $branch->setCreatedAt($now);
         return $branch;
     }
 
