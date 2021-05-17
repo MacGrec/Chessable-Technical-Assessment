@@ -24,3 +24,8 @@ Import using postman to use the api:
 - **External connections:** Check the change between different coins using a third party 
 - **Chance to ask money:** A customer can to ask for money to the bank generating a debt and a monthly payment 
 
+# Notes
+- I didn't use the ORM to access to the Database. All the querys are raws.
+- I didn't all the test, I did a couple of them to show you how I do.
+    This is not a full set of test, trustworthy to upload to Live. 
+    You must to check all the Endpoints (every posible response) and Services (every possible differece at the business logic)
