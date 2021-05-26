@@ -41,11 +41,12 @@ class CustomerRepository extends ServiceEntityRepository
     {
         $sql = 'SELECT * FROM customer where id ='. $customer_id .';';
         $database_returned_data = $this->getDatabaseData($sql);
-        if(!isset($database_returned[0])) {
+        if(!isset($database_returned_data[0])) {
             return null;
         }
-        $database_array_branch = $database_returned[0];
+        $database_array_branch = $database_returned_data[0];
         $name = $database_array_branch["name"];
+        $customer = new Customer();
         $customer->setName($name);
         return $customer;
     }
@@ -61,18 +62,17 @@ class CustomerRepository extends ServiceEntityRepository
                 WHERE customer.id = '. $customer_id . ' 
                 GROUP BY customer_id;';
         $database_returned_data = $this->getDatabaseData($sql);
-        if(!isset($database_returned[0])) {
+        if(!isset($database_returned_data[0])) {
             return null;
         }
-        $database_array_branch = $database_returned[0];
+        $database_array_branch = $database_returned_data[0];
         return floatval($database_array_branch["total_balance"]);
     }
 
     private function getDatabaseData(string $sql): array
     {
         $statement = $this->executeQuery($sql);
-        $database_returned_data = $statement->fetchAll();
-        return $database_returned_data;
+        return $statement->fetchAll();
     }
 
     private function executeQuery(string $sql): Statement
