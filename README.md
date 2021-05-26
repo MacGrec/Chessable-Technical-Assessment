@@ -5,8 +5,8 @@
 - You can see the database scheme at database-scheme.png
 
 # Launch tests
-- **Unit Tests:** docker-compose exec app bin/phpunit tests/Unity
-- **Functional Tests:** docker-compose exec app bin/phpunit tests/Functional
+- **Unit Tests:** docker-compose exec app php .vendor/bin/phpunit tests/Unit
+- **Functional Tests:** docker-compose exec app php .vendor/bin/phpunit tests/Functional
 
 # Postman
 Import using postman to use the api:
